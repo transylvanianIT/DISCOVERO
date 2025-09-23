@@ -7,8 +7,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useGetTopChartsQuery } from '../redux/services/shazamCore';
 
 const Discover = () => {
-
     const dispatch = useDispatch();
+    
     const { activeSong, isPlaying } = useSelector((state) => state.player);
     const { data, isFetching, error} = useGetTopChartsQuery();
     const genreTitile = 'Pop';
@@ -38,7 +38,7 @@ const Discover = () => {
             <div className="flex flex-wrap sm:justify-start justify-center gap-8">
                 {data?.map((song, i) => (
                     <SongCard 
-                        key={song.id}
+                        key={song.key || song.id}
                         song={song}
                         i={i}
                         isPlaying={isPlaying}

@@ -13,24 +13,23 @@ const SongCard = ({ song, isPlaying, activeSong, data, i }) => {
   };
 
   const handlePlayClick = () => {
-    dispatch(setActiveSong({     
-    id: song.id,
-    title: song.attributes.name,
-    artist: song.attributes.artistName,
-    img: song.attributes.artwork.url,
-    audio: song.attributes.previews[0]?.url}));
+    dispatch(setActiveSong({ song, data, i }));
     dispatch(playPause(true));
   };
 
-    // date reale din API
-  const songTitle = song.attributes?.name;
-  const songArtist = song.attributes?.artistName;
-  const songImg = song.attributes?.artwork?.url
+  const songTitle = song?.title || song?.attributes?.name;
+  const songArtist = song?.subtitle || song?.attributes?.artistName;
+  const songImg = song?.images?.coverart || song?.attributes?.artwork?.url;
+
+  const songKey = song?.key || song?.id;
+  const artistId = song?.artists?.[0]?.adamid || song?.relationships?.artists?.data?.[0]?.id || songArtist;
 
   return (
     <div className="flex flex-col w-[250px] p-4 bg-white/5 bg-opacity-80 backdrop-blur-sm animate-slideup rounded-lg cursor-pointer">
       <div className="relative w-full h-56 group">
-        <div className={`absolute inset-0 justify-center items-center bg-black bg-opacity-50 group-hover:flex ${activeSong?.id === song.id ? 'flex bg-black bg-opacity-70' : 'hidden'}`}>
+        <div className={`absolute inset-0 justify-center items-center bg-black bg-opacity-50 ${
+          ((activeSong?.key || activeSong?.id) === songKey) ? 'flex bg-black bg-opacity-70' : 'hidden group-hover:flex'
+        }`}>
           <PlayPause
             isPlaying={isPlaying}
             activeSong={activeSong}
@@ -48,12 +47,12 @@ const SongCard = ({ song, isPlaying, activeSong, data, i }) => {
 
       <div className="mt-4 flex flex-col">
         <p className="font-semibold text-lg text-white truncate">
-          <Link to={`/songs/${song.id}`}>
+          <Link to={`/songs/${songKey}`}>
             {songTitle}
           </Link>
         </p>
         <p className="text-sm truncate text-gray-300 mt-1">
-          <Link to={`/artists/${songArtist}`}>
+          <Link to={`/artists/${artistId}`}>
             {songArtist}
           </Link>
         </p>
