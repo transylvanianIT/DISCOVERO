@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { Route, Routes } from 'react-router-dom';
 
@@ -6,6 +7,16 @@ import { ArtistDetails, TopArtists, AroundYou, Discover, Search, SongDetails, To
 
 const App = () => {
   const { activeSong } = useSelector((state) => state.player);
+  const scrollRef = useRef(null);
+
+  useEffect(() => {
+    const isXl = window.matchMedia('(min-width: 1280px)').matches;
+    if (!isXl) {
+      // Ensure both the container and window are at the top on small screens
+      scrollRef.current?.scrollTo({ top: 0, behavior: 'auto' });
+      window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+    }
+  }, []);
 
   return (
     <div className="relative flex">
@@ -13,8 +24,9 @@ const App = () => {
       <div className="flex-1 flex flex-col bg-gradient-to-br from-black to-[#121286]">
         <Searchbar />
 
-        <div className="px-6 h-[calc(100vh-72px)] overflow-y-scroll hide-scrollbar flex xl:flex-row flex-col-reverse">
-          <div className="flex-1 h-fit pb-40">
+        <div ref={scrollRef} className="px-6 h-[calc(100vh-72px)] overflow-y-scroll hide-scrollbar flex xl:flex-row flex-col">
+
+          <div className="flex-1 h-fit pb-40 order-2 xl:order-1">
             <Routes>
               <Route path="/" element={<Discover />} />
               <Route path="/top-artists" element={<TopArtists />} />
@@ -25,7 +37,7 @@ const App = () => {
               <Route path="/search/:searchTerm" element={<Search />} />
             </Routes>
           </div>
-          <div className="xl:sticky relative top-0 h-fit">
+          <div className="xl:sticky relative top-0 h-fit order-1 xl:order-2">
             <TopPlay />
           </div>
         </div>
